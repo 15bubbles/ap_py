@@ -1,5 +1,6 @@
-from architecture_patterns.domain.model import Batch
 from architecture_patterns.adapters.repository import AbstractRepository
+from architecture_patterns.domain.model import Batch
+from architecture_patterns.service_layer.unit_of_work import AbstractUnitOfWork
 
 
 class FakeRepository(AbstractRepository):
@@ -14,3 +15,15 @@ class FakeRepository(AbstractRepository):
 
     def list(self) -> list[Batch]:
         return self.batches
+
+
+class FakeUnitOfWork(AbstractUnitOfWork):
+    def __init__(self):
+        self.batches = FakeRepository([])
+        self.committed = False
+
+    def commit(self):
+        self.committed = True
+
+    def rollback(self):
+        pass
