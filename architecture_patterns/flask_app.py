@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from architecture_patterns import orm
 from architecture_patterns import repository
 from architecture_patterns import model
+from architecture_patterns import services
 
 # TODO: move this to configuration module
 POSTGRES_URL = ""
@@ -14,18 +15,24 @@ get_session = sessionmaker(bind=create_engine(POSTGRES_URL))
 app = Flask(__name__)
 
 
-# TODO: validation of incoming data
 @app.route("/allocate", methods=["POST"])
 def allocate():
-    data = request.json()
-    line = model.OrderLine(
-        order_id=data["order_id"],
-        sku=data["sku"],
-        quantity=data["quantity"]
-    )
+    try:
+        data = request.json()
+        line = model.OrderLine(
+            order_id=data["order_id"],
+            sku=data["sku"],
+            quantity=data["quantity"]
+        )
+    except KeyError:  # TODO: calling `json` might raise some error as well, include it
+        return {"message": "Invalid data"}
 
     session = get_session()
-    batches = repository.SqlAlchemyRepository(session).list()
-    batch_reference = model.allocate(line, batches)
+    repo = repository.SqlAlchemyRepository(session)
+
+    try:
+        batch_reference = services.allocate(line, repo, session)
+    except (model.OutOfStock, services.InvalidSku) as e:
+        return {"message": str(e)}, 400
 
     return {"batch_reference": batch_reference}, 201
