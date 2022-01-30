@@ -2,10 +2,9 @@ from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from architecture_patterns import orm
-from architecture_patterns import repository
-from architecture_patterns import model
-from architecture_patterns import services
+from architecture_patterns.adapters import orm, repository
+from architecture_patterns.domain import model
+from architecture_patterns.service_layer import services
 
 # TODO: move this to configuration module
 POSTGRES_URL = ""

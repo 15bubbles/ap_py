@@ -1,7 +1,7 @@
-from sqlalchemy.orm import mapper, relationship
+from sqlalchemy.orm import mapper
 from sqlalchemy import MetaData, Table, Column, Integer, String
 
-from architecture_patterns.model import OrderLine
+from architecture_patterns.domain.model import OrderLine
 
 metadata = MetaData()
 

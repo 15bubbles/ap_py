@@ -2,8 +2,8 @@ from collections.abc import Iterable
 
 from sqlalchemy.orm import Session
 
-from architecture_patterns import model
-from architecture_patterns.repository import AbstractRepository
+from architecture_patterns.domain import model
+from architecture_patterns.adapters.repository import AbstractRepository
 
 
 class InvalidSku(Exception):

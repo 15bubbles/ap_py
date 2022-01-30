@@ -1,6 +1,6 @@
 import abc
 
-from architecture_patterns.model import Batch
+from architecture_patterns.domain.model import Batch
 from sqlalchemy.orm.session import Session
 
 

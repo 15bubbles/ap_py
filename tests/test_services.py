@@ -1,5 +1,5 @@
-from architecture_patterns.model import Batch
-from architecture_patterns.repository import AbstractRepository
+from architecture_patterns.domain.model import Batch
+from architecture_patterns.adapters.repository import AbstractRepository
 
 
 class FakeRepository(AbstractRepository):
