@@ -3,6 +3,7 @@ import abc
 from architecture_patterns.model import Batch
 from sqlalchemy.orm.session import Session
 
+
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def add(self, batch: Batch):
