@@ -19,9 +19,7 @@ def allocate():
     try:
         data = request.json()
         line = model.OrderLine(
-            order_id=data["order_id"],
-            sku=data["sku"],
-            quantity=data["quantity"]
+            order_id=data["order_id"], sku=data["sku"], quantity=data["quantity"]
         )
     except KeyError:  # TODO: calling `json` might raise some error as well, include it
         return {"message": "Invalid data"}
