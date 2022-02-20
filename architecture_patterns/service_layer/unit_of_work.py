@@ -6,13 +6,11 @@ from sqlalchemy.orm import sessionmaker
 
 # TODO: move this to config module
 POSTGRES_URL = ""
-DEFAULT_SESSION_FACTORY = sessionmaker(
-    bind=create_engine(POSTGRES_URL)
-)
+DEFAULT_SESSION_FACTORY = sessionmaker(bind=create_engine(POSTGRES_URL))
 
 
 class AbstractUnitOfWork(abc.ABC):
-    batches: repository.AbstractRepository
+    products: repository.AbstractProductRepository
 
     def __enter__(self):
         return self
@@ -35,7 +33,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
     def __enter__(self):
         self.session = self.session_factory()
-        self.batches = repository.SqlAlchemyRepository(self.session)
+        self.products = repository.SqlAlchemyProductRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):

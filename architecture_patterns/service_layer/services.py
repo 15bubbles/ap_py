@@ -1,3 +1,5 @@
+from typing import Optional
+import datetime
 from collections.abc import Iterable
 
 from architecture_patterns.domain import model
@@ -13,14 +15,32 @@ def is_valid_sku(sku: str, batches: Iterable[model.Batch]) -> bool:
     return sku in {batch.sku for batch in batches}
 
 
+def add_batch(
+    reference: str,
+    sku: str,
+    quantity: int,
+    eta: Optional[datetime.date],
+    uow: AbstractUnitOfWork,
+) -> None:
+    with uow:
+        product = uow.products.get(sku=sku)
+
+        if product is None:
+            product = model.Product(sku, batches=[])
+            uow.products.add(product)
+
+        product.batches.append(model.Batch(reference, sku, quantity, eta))
+        uow.commit()
+
+
 def allocate(line: model.OrderLine, uow: AbstractUnitOfWork) -> str:
     with uow:
-        batches = uow.batches.list()
+        product = uow.products.get(sku=line.sku)
 
-        if not is_valid_sku(line.sku, batches):
+        if product is None:
             raise InvalidSku(f"Invalid sku '{line.sku}'")
 
-        batch_reference = model.allocate(line, batches)
+        batch_reference = product.allocate(line)
         uow.commit()
 
         return batch_reference
