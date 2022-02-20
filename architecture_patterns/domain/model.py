@@ -12,7 +12,9 @@ class OrderLine:
 
 
 class Batch:
-    def __init__(self, reference: str, sku: str, quantity: int, eta: Optional[datetime.date]):
+    def __init__(
+        self, reference: str, sku: str, quantity: int, eta: Optional[datetime.date]
+    ):
         self.reference = reference
         self.sku = sku
         self.eta = eta
@@ -60,3 +62,18 @@ def allocate(line: OrderLine, batches: list[Batch]) -> str:
 
     batch.allocate(line)
     return batch.reference
+
+
+class Product:
+    def __init__(self, sku: str, batches: list[Batch]):
+        self.sku = sku
+        self.batches = batches
+
+    def allocate(self, line: OrderLine) -> str:
+        try:
+            batch = next(batch for batch in self.batches if batch.can_allocate(line))
+        except StopIteration:
+            raise OutOfStock(f"Out of stock for sku {line.sku}")
+
+        batch.allocate(line)
+        return batch.reference
